@@ -120,7 +120,7 @@ spec:
         container('kaniko') {
           sh "sed -i 's,harbor.example.com,${env.HARBOR_URL},g' Dockerfile" 
           sh "cat Dockerfile"
-          sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/myjenkins/spring-petclinic:v1.0.${env.BUILD_ID}"
+          sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
         }
       }
     }
