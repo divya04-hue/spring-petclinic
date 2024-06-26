@@ -130,6 +130,7 @@ spec:
         }
       }
     }
+  }
     stage('Image Vulnerability Scan') {
       steps {
         writeFile file: 'anchore_images', text: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
