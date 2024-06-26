@@ -126,7 +126,7 @@ spec:
               /kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID} \
               --build-arg HARBOR_USER=${HARBOR_USER} --build-arg HARBOR_PASS=${HARBOR_PASS}
             """
-          #sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
+          // sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
         }
       }
     }
