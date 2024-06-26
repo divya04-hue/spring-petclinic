@@ -11,8 +11,8 @@ pipeline {
     DEPLOY_GITREPO_URL = "github.com/${DEPLOY_GITREPO_USER}/spring-petclinic-helmchart.git"
     DEPLOY_GITREPO_BRANCH = "main"
     DEPLOY_GITREPO_TOKEN = credentials('my-github')
-    HARBOR_URL = "harbor.anpslab.com"
-    HARBOR_CREDENTIALS = credentials('my-harbor')
+    //HARBOR_URL = "harbor.anpslab.com"
+    //HARBOR_CREDENTIALS = credentials('my-harbor')
   }    
   agent {
     kubernetes {
@@ -121,12 +121,12 @@ spec:
         container('kaniko') {
           sh "sed -i 's,harbor.example.com,${env.HARBOR_URL},g' Dockerfile" 
           sh "cat Dockerfile"
-          withCredentials([usernamePassword(credentialsId: 'my-harbor', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-            sh """
-              /kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID} \
-              --build-arg HARBOR_USER=${HARBOR_USER} --build-arg HARBOR_PASS=${HARBOR_PASS}
-            """
-          // sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
+         // withCredentials([usernamePassword(credentialsId: 'my-harbor', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+           // sh """
+             // /kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID} \
+              //--build-arg HARBOR_USER=${HARBOR_USER} --build-arg HARBOR_PASS=${HARBOR_PASS}
+           // """
+          sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
         }
       }
     }
