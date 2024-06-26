@@ -132,7 +132,7 @@ spec:
     }
     stage('Image Vulnerability Scan') {
       steps {
-        writeFile file: 'anchore_images', text: "${env.HARBOR_URL}/devsecops/samples/spring-petclinic:v1.0.${env.BUILD_ID}"
+        writeFile file: 'anchore_images', text: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
         anchore name: 'anchore_images'
       }
     }
@@ -155,7 +155,7 @@ spec:
             # After cloning
             cd deploy
             # update values.yaml
-            sed -i -r 's,repository: (.+),repository: ${env.HARBOR_URL}/devsecops/samples/spring-petclinic,' values.yaml
+            sed -i -r 's,repository: (.+),repository: ${env.HARBOR_URL}/devsecops/spring-petclinic,' values.yaml
             sed -i 's/tag: v1.0.*/tag: v1.0.${env.BUILD_ID}/' values.yaml
             cat values.yaml
             git commit -am 'bump up version number'
