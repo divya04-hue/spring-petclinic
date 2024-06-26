@@ -7,7 +7,8 @@ def myid = uuid.take(8)
 pipeline {
   environment {
     APP_VER = "v1.0.${BUILD_ID}"
-    // HARBOR_URL = ""
+    HARBOR_URL = "harbor.anpslab.com"
+    HARBOR_CREDENTIALS = crednetials('my-harbor')
     DEPLOY_GITREPO_USER = "divya04-hue"    
     DEPLOY_GITREPO_URL = "github.com/${DEPLOY_GITREPO_USER}/spring-petclinic-helmchart.git"
     DEPLOY_GITREPO_BRANCH = "main"
