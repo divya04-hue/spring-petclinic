@@ -13,6 +13,8 @@ pipeline {
     DEPLOY_GITREPO_TOKEN = credentials('my-github')
     //HARBOR_URL = "harbor.anpslab.com"
     //HARBOR_CREDENTIALS = credentials('my-harbor')
+    SCANNER_IMAGE = 'neuvector/scanner:latest'
+    SCAN_REPORT = 'scan_report.json'
   }    
   agent {
     kubernetes {
@@ -50,6 +52,14 @@ spec:
       mountPath: /kaniko/.docker
     - name: ca-cert
       mountPath: /kaniko/ssl/certs/
+  - name: neuvector-scanner
+    image: ${SCANNER_IMAGE}
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-sock
+      mountPath: /var/run/docker.sock
   volumes:
     - name: ca-cert
       secret:
@@ -63,6 +73,10 @@ spec:
     - name: m2
       persistentVolumeClaim:
         claimName: m2
+    - name: docker-sock
+      hostPath:
+        path: /var/run/docker.sock
+        type: Socket
 """
 }
    }
@@ -79,7 +93,7 @@ spec:
     }
     stage('Test') {
       parallel {
-        stage(' Unit/Integration Tests') {
+        stage('Unit/Integration Tests') {
           steps {
             container('maven') {
               sh """
@@ -137,6 +151,24 @@ spec:
         //anchore name: 'anchore_images'
      // }
     //}
+    stage('NeuVector Scan') {
+      steps {
+        container('neuvector-scanner') {
+          script {
+            sh """
+              docker pull ${SCANNER_IMAGE}
+              docker run --rm \
+              -v /var/run/docker.sock:/var/run/docker.sock \
+              ${SCANNER_IMAGE} \
+              scan \
+              -t ${HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID} \
+              -r ${SCAN_REPORT}
+            """
+            archiveArtifacts artifacts: "${SCAN_REPORT}", allowEmptyArchive: true
+          }
+        }
+      }
+    }
     stage('Approval') {
       input {
         message "Proceed to deploy?"
@@ -145,7 +177,7 @@ spec:
       steps {
         echo "Update helm chart to trigger GitOps-based deployment..."
       }
-    }    
+    }
     stage('GitOps-based Deploy') {
       steps {
         container('maven') {
@@ -168,4 +200,3 @@ spec:
     }   
   }
 }
-
