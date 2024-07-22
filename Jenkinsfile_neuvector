@@ -13,7 +13,7 @@ pipeline {
     DEPLOY_GITREPO_TOKEN = credentials('my-github')
     //HARBOR_URL = "harbor.anpslab.com"
     //HARBOR_CREDENTIALS = credentials('my-harbor')
-    SCANNER_IMAGE = 'neuvector/scanner:latest'
+    SCANNER_IMAGE = 'devsecops/spring-petclinic:latest'
     SCAN_REPORT = 'scan_report.json'
   }    
   agent {
