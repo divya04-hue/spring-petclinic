@@ -13,6 +13,8 @@ pipeline {
     DEPLOY_GITREPO_TOKEN = credentials('my-github')
     //HARBOR_URL = "harbor.anpslab.com"
     //HARBOR_CREDENTIALS = credentials('my-harbor')
+    SCANNER_IMAGE = 'neuvector/scanner:latest' // Replace with the correct NeuVector scanner image
+    HARBOR_IMAGE = 'devsecops/spring-petclinic' // Replace with your Docker image to scan
   }    
   agent {
     kubernetes {
@@ -137,6 +139,27 @@ spec:
         //anchore name: 'anchore_images'
      // }
     //}
+    stage('Scan with NeuVector') {
+            steps {
+                script {
+                    // Pull the NeuVector scanner image
+                    sh 'docker pull ${SCANNER_IMAGE}'
+                    
+                    // Run the NeuVector scanner
+                    sh """
+                    docker run --rm \
+                        -v /var/run/docker.sock:/var/run/docker.sock \
+                        -v /tmp:/tmp \
+                        ${SCANNER_IMAGE} \
+                        --scan ${DOCKER_IMAGE} \
+                        --output /tmp/scan_report.json
+                    """
+                    
+                    // Print the scan report
+                    sh 'cat /tmp/scan_report.json'
+                }
+            }
+        }
     stage('Approval') {
       input {
         message "Proceed to deploy?"
