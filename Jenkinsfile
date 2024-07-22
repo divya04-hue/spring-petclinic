@@ -15,6 +15,8 @@ pipeline {
     //HARBOR_CREDENTIALS = credentials('my-harbor')
     SCANNER_IMAGE = 'neuvector/scanner:latest' // Replace with the correct NeuVector scanner image
     HARBOR_IMAGE = 'devsecops/spring-petclinic' // Replace with your Docker image to scan
+    NAMESPACE = cattle-neuvector-system' // Namespace where NeuVector is deployed
+    SCANNER_POD_LABEL = 'neuvector-scanner' // Label of the NeuVector scanner pod
   }    
   agent {
     kubernetes {
@@ -66,8 +68,8 @@ spec:
       persistentVolumeClaim:
         claimName: m2
 """
-}
-   }
+    }
+  }
   stages {
     stage('Build') {
       steps {
@@ -81,7 +83,7 @@ spec:
     }
     stage('Test') {
       parallel {
-        stage(' Unit/Integration Tests') {
+        stage('Unit/Integration Tests') {
           steps {
             container('maven') {
               sh """
@@ -140,26 +142,19 @@ spec:
      // }
     //}
     stage('Scan with NeuVector') {
-            steps {
-                script {
-                    // Pull the NeuVector scanner image
-                    sh 'docker pull ${SCANNER_IMAGE}'
-                    
-                    // Run the NeuVector scanner
-                    sh """
-                    docker run --rm \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        -v /tmp:/tmp \
-                        ${SCANNER_IMAGE} \
-                        --scan ${DOCKER_IMAGE} \
-                        --output /tmp/scan_report.json
-                    """
-                    
-                    // Print the scan report
-                    sh 'cat /tmp/scan_report.json'
-                }
-            }
+      steps {
+        script {
+          neuvectorScan(
+            image: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}",
+            scannerImage: SCANNER_IMAGE,
+            timeout: 300,
+            output: '/tmp/scan_report.json'
+          )
+          // Print the scan report
+          sh 'cat /tmp/scan_report.json'
         }
+      }
+    }
     stage('Approval') {
       input {
         message "Proceed to deploy?"
