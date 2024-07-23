@@ -15,7 +15,7 @@ pipeline {
     //HARBOR_CREDENTIALS = credentials('my-harbor')
     SCANNER_IMAGE = 'neuvector/scanner:latest' // Replace with the correct NeuVector scanner image
     HARBOR_IMAGE = 'devsecops/spring-petclinic' // Replace with your Docker image to scan
-    NAMESPACE = cattle-neuvector-system' // Namespace where NeuVector is deployed
+    NAMESPACE = 'cattle-neuvector-system' // Namespace where NeuVector is deployed
     SCANNER_POD_LABEL = 'neuvector-scanner' // Label of the NeuVector scanner pod
   }    
   agent {
