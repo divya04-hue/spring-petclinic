@@ -145,7 +145,8 @@ spec:
       steps {
         script {
           neuvectorScan(
-            image: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}",
+            //image: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}",
+            image: "nginx",
             scannerImage: SCANNER_IMAGE,
             timeout: 300,
             output: '/tmp/scan_report.json'
