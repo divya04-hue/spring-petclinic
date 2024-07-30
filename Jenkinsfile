@@ -153,7 +153,7 @@ spec:
         //nameOfVulnerabilityToFailTwo: '', 
         //numberOfHighSeverityToFail: '50', 
         //numberOfMediumSeverityToFail: '50', 
-        registrySelection: 'harbor.anpslab.com', 
+        registrySelection: 'https://harbor.anpslab.com', 
         repository: "devsecops/spring-petclinic", 
         scanLayers: true,
         tag: "v1.0.${env.BUILD_ID}"
