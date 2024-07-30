@@ -156,7 +156,7 @@ spec:
         registrySelection: 'https://harbor.anpslab.com', 
         repository: "admin/devsecops/spring-petclinic", 
         scanLayers: true,
-        tag: "v1.0.${env.BUILD_ID}"
+        tag: "v1.0.88" //${env.BUILD_ID}"
       }
     }
     stage('Approval') {
