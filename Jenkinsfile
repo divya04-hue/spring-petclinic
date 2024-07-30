@@ -125,35 +125,27 @@ spec:
         container('kaniko') {
           sh "sed -i 's,harbor.example.com,${env.HARBOR_URL},g' Dockerfile" 
           sh "cat Dockerfile"
-         // withCredentials([usernamePassword(credentialsId: 'my-harbor', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
-           // sh """
-             // /kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID} \
-              //--build-arg HARBOR_USER=${HARBOR_USER} --build-arg HARBOR_PASS=${HARBOR_PASS}
-           // """
           sh "/kaniko/executor --dockerfile Dockerfile --context `pwd` --skip-tls-verify --force --destination=${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
         }
       }
     }
-  // }
-   // stage('Image Vulnerability Scan') {
-     // steps {
-       // writeFile file: 'anchore_images', text: "${env.HARBOR_URL}/devsecops/spring-petclinic:v1.0.${env.BUILD_ID}"
-        //anchore name: 'anchore_images'
-     // }
-    //}
-    stage('Scan with NeuVector') {
+    stage('NeuVector Image Vulnerability Scan') {
       steps {
-        script {
-          neuvectorScan(
-            image: "https://harbor.anpslab.com/devsecops/spring-petclinic:v1.0.84",
-            //image: "nginx",
-            scannerImage: SCANNER_IMAGE,
-            timeout: 300,
-            output: '/tmp/scan_report.json'
-          )
-          // Print the scan report
-          sh 'cat /tmp/scan_report.json'
-        }
+        //nv jenkins plugin conf
+        neuvector nameOfVulnerabilityToExemptFour: 'CVE-2020-36518',
+        nameOfVulnerabilityToExemptOne: 'CVE-2022-42004',
+        nameOfVulnerabilityToExemptThree: 'CVE-2021-42550',
+        nameOfVulnerabilityToExemptTwo: 'CVE-2020-17527',
+        nameOfVulnerabilityToFailFour: '', 
+        nameOfVulnerabilityToFailOne: '', 
+        nameOfVulnerabilityToFailThree: '', 
+        nameOfVulnerabilityToFailTwo: '', 
+        numberOfHighSeverityToFail: '50', 
+        numberOfMediumSeverityToFail: '50', 
+        registrySelection: 'harbor', 
+        repository: "devsecops/spring-petclinic", 
+        scanLayers: true,
+        tag: "v1.0.${env.BUILD_ID}"
       }
     }
     stage('Approval') {
