@@ -132,31 +132,20 @@ spec:
     stage('NeuVector Image Vulnerability Scan') {
       steps {
         //nv jenkins plugin conf
-        neuvector nameOfVulnerabilityToExemptFour: '',
-        nameOfVulnerabilityToExemptOne: '', 
-        nameOfVulnerabilityToExemptThree: '', 
-        nameOfVulnerabilityToExemptTwo: '', 
+        neuvector nameOfVulnerabilityToExemptFour: 'CVE-2020-36518',
+        nameOfVulnerabilityToExemptOne: 'CVE-2022-42004',
+        nameOfVulnerabilityToExemptThree: 'CVE-2021-42550',
+        nameOfVulnerabilityToExemptTwo: 'CVE-2020-17527',
         nameOfVulnerabilityToFailFour: '', 
         nameOfVulnerabilityToFailOne: '', 
         nameOfVulnerabilityToFailThree: '', 
         nameOfVulnerabilityToFailTwo: '', 
-        numberOfHighSeverityToFail: '1', 
-        numberOfMediumSeverityToFail: '3', 
-        //nv jenkins plugin conf
-     //   neuvector nameOfVulnerabilityToExemptFour: 'CVE-2020-36518',
-       // nameOfVulnerabilityToExemptOne: 'CVE-2022-42004',
-        //nameOfVulnerabilityToExemptThree: 'CVE-2021-42550',
-        //nameOfVulnerabilityToExemptTwo: 'CVE-2020-17527',
-        //nameOfVulnerabilityToFailFour: '', 
-        //nameOfVulnerabilityToFailOne: '', 
-        //nameOfVulnerabilityToFailThree: '', 
-        //nameOfVulnerabilityToFailTwo: '', 
-        //numberOfHighSeverityToFail: '50', 
-        //numberOfMediumSeverityToFail: '50', 
-        registrySelection: 'https://harbor.anpslab.com', 
-        repository: "admin/devsecops/spring-petclinic", 
+        numberOfHighSeverityToFail: '50', 
+        numberOfMediumSeverityToFail: '50', 
+        registrySelection: 'harbor', 
+        repository: "devsecops/spring-petclinic", 
         scanLayers: true,
-        tag: "v1.0.88" //${env.BUILD_ID}"
+        tag: "v1.0.${env.BUILD_ID}"
       }
     }
     stage('Approval') {
